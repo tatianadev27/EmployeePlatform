@@ -1,5 +1,5 @@
 # EmployeePlatform
-Employee Platform APP
+## Employee Platform APP
 ### GraphQL
 ### .Net Core
 ### Pattern design Repository
