@@ -1,0 +1,85 @@
+﻿@model EmployeePlatform.Entities.EmployeeDTO
+@{
+    ViewData["Title"] = "Employees";
+}
+<div class="col p-4">
+
+
+    <main class="my-form">
+        <div class="cotainer">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header">Editar Empleado</div>
+                        <div class="card-body">
+                            <form name="my-form" action="@Url.Action("Edit", "Employee")" method="post">
+                                @Html.AntiForgeryToken()
+                                @Html.HiddenFor(x => x.Id)
+                                <div class="form-group row">
+                                    <label for="full_name" class="col-md-4 col-form-label text-md-right">Documento</label>
+                                    <div class="col-md-6">
+                                        <input type="text" id="full_name" required class="form-control" value="@Model.IdentificationNumber" name="IdentificationNumber">
+                                    </div>
+                                    @Html.ValidationMessageFor(m => m.IdentificationNumber, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-group row">
+                                    <label for="full_name" class="col-md-4 col-form-label text-md-right">Tipo Documento</label>
+                                    <div class="col-md-6">
+                                        @Html.DropDownListFor(x => x.IdentificationTypeId, new SelectList(ViewBag.IdentificationTypes, "Id", "Name"), new { @class = "form-control" })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => m.IdentificationTypeId, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-group row">
+                                    <label for="full_name" class="col-md-4 col-form-label text-md-right">Nombre</label>
+                                    <div class="col-md-6">
+                                        <input type="text" id="full_name" required class="form-control" value="@Model.FirstName" name="FirstName">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="full_name" class="col-md-4 col-form-label text-md-right">Apellidos</label>
+                                    <div class="col-md-6">
+                                        <input type="text" id="full_name" required class="form-control" value="@Model.LastName" name="LastName">
+                                    </div>
+                                    @Html.ValidationMessageFor(m => m.LastName, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-group row">
+                                    <label for="full_name" class="col-md-4 col-form-label text-md-right">Area</label>
+                                    <div class="col-md-6">
+                                        @Html.DropDownListFor(x => x.Subarea.Area.Id, new SelectList(ViewBag.Areas, "Id", "Name"), new { @class = "form-control", @onchange = "employeeSelect()" })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => m.Subarea.Area.Id, "", new { @class = "text-danger", @id = "AreaId" })
+                                </div>
+                                <div class="form-group row">
+                                    <label for="full_name" class="col-md-4 col-form-label text-md-right">Subarea</label>
+                                    <div class="col-md-6">
+                                        <input type="hidden" id="IdSubarea" value="@Model.SubareaId" />
+                                        <select required class="form-control" name="SubareaId" id="SubareaId">
+                                        </select>
+                                    </div>
+                                    @Html.ValidationMessageFor(m => m.SubareaId, "", new { @class = "text-danger" })
+                                </div>
+
+
+                                <div class="col-md-6 offset-md-4">
+                                    <button type="submit" class="btn btn-primary">
+                                        Editar empleado
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+<script src="~/app/employee/employee-select.js"></script>
+<script>
+     $(document).ready(function () {
+        globals.token = "@Model.Token";
+        globals.pageSize = "@(int.Parse(Environment.GetEnvironmentVariable("PAGE_SIZE_INITIAL")))";
+        globals.url = "@Environment.GetEnvironmentVariable("GRAPHQL_URI")";
+        employeeSelect()
+     })
+
+</script>

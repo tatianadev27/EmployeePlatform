@@ -1,0 +1,111 @@
+﻿@model EmployeePlatform.Entities.EmployePaginationDTO
+@{
+    ViewData["Title"] = "Employees";
+}
+
+<div class="col p-4">
+    <div class="row">
+        <div class="col-md-4">
+
+            <div class="input-group">
+                <!-- USE TWITTER TYPEAHEAD JSON WITH API TO SEARCH -->
+                <input class="form-control" id="employee-search" name="" placeholder="Buscar por nombre o identificación" required>
+                <span class="input-group-btn">
+                    <button type="button" id="search-employee" class="btn btn-default"><i class="fa fa-search"></i> Filtrar</button>
+                    <button type="button" id="search-employee" class="btn btn-default" onclick="cleanEmployeeList()"><i class="fa fa-circle"></i> Limpiar</button>
+                </span>
+            </div>
+        </div>
+        <div class="col-md-6"></div>
+        <div class="col-md-2"><a class="btn btn-primary" href="@Url.Action("Register","Employee")" ALIGN=right>Nuevo Empleado</a></div>
+    </div>
+    <br />
+    <div class="card">
+        <h5 class="card-header font-weight-light">Empleados</h5>
+        <!-- Main Col END -->
+        <section id="employee-message"></section>
+        <div class="text-center">
+            <table class="table table-bordered" id="employee-table">
+                <thead>
+                    <tr>
+                        <th>
+                            Id
+                        </th>
+                        <th>
+                            Identificación
+                        </th>
+                        <th>
+                            Tipo Identificación
+                        </th>
+                        <th>
+                            Nombre completo
+                        </th>
+                        <th>
+                            Area
+                        </th>
+                        <th>
+                            SubArea
+                        </th>
+                        <th>
+                            Editar
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="employee-body-table">
+                    @foreach (var item in Model.Results)
+                    {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Id)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.IdentificationNumber)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.IdentificationType.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FirstName) @Html.DisplayFor(modelItem => item.LastName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Subarea.Area.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Subarea.Name)
+                        </td>
+                        <td>
+                            <a href="@Url.Action("Register","Employee", new { id = item.Id})"><span class="fa fa-edit"></span></a>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+            <section id="paginationComponent"></section>
+        </div>
+    </div>
+</div>
+<script src="~/app/employee/employee-list.js"></script>
+<script src="~/app/utils/pagination.js"></script>
+<script src="~/app/utils/pagination-component.js"></script>
+<script>
+    $(document).ready(function () {
+        globals.token = "@Model.Token";
+        globals.pageSize = "@(int.Parse(Environment.GetEnvironmentVariable("PAGE_SIZE_INITIAL")))";
+        globals.url = "@Environment.GetEnvironmentVariable("GRAPHQL_URI")";
+
+        $('#paginationComponent').html('<ul id="pagination" class="pagination-sm"></ul>');
+        paginationComponent({
+            totalRecords: "@Model.TotalRecords",
+            totalPages: "@Model.TotalPages"
+        });
+
+        $("#search-employee").click(function () {
+            employeeList({
+                page: 1,
+                filter: $("#employee-search").val(),
+                isFilter: true
+            })
+        });
+    })
+</script>
+
